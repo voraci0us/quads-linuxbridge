@@ -58,7 +58,7 @@ services:
       - WORDPRESS_IP=wordpress
     volumes:
       - /opt/docker/quads:/opt/quads
-
+      - ~/.ssh:/root/.ssh
   quads-db:
     image: mongo:4.0.4-xenial
     container_name: quads_db
