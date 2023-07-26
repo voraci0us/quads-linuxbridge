@@ -29,7 +29,7 @@ def verify(cloud):
         if host and host.interfaces:
             interfaces = sorted(host.interfaces, key=lambda k: k["name"])
             for i, interface in enumerate(interfaces):
-                ssh_helper = SSHHelper(interface.switch_ip, Config["junos_username"])
+                ssh_helper = SSHHelper(interface.switch_ip, Config["switch_username"])
                 try:
                     if interface == interfaces[-1]:
                         _, vlan_member_out = ssh_helper.run_cmd(

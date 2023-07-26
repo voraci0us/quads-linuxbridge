@@ -35,7 +35,7 @@ def switch_config(host, old_cloud, new_cloud):
         if not switch_ip:
             switch_ip = interface.switch_ip
             try:
-                ssh_helper = SSHHelper(switch_ip, Config["junos_username"])
+                ssh_helper = SSHHelper(switch_ip, Config["switch_username"])
             except SSHHelperException:
                 logger.error(f"Failed to connect to switch: {switch_ip}")
                 return False
@@ -43,7 +43,7 @@ def switch_config(host, old_cloud, new_cloud):
             if switch_ip != interface.switch_ip:
                 ssh_helper.disconnect()
                 switch_ip = interface.switch_ip
-                ssh_helper = SSHHelper(switch_ip, Config["junos_username"])
+                ssh_helper = SSHHelper(switch_ip, Config["switch_username"])
         result, old_vlan_out = ssh_helper.run_cmd(
             "show configuration interfaces %s" % interface.switch_port
         )

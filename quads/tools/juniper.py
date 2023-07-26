@@ -23,7 +23,7 @@ class Juniper(object):
         try:
             self.child = pexpect.spawn(
                 "ssh -o StrictHostKeyChecking=no %s@%s"
-                % (Config["junos_username"], self.ip_address)
+                % (Config["switch_username"], self.ip_address)
             )
             self.child.expect(">")
         except pexpect.exceptions.TIMEOUT:

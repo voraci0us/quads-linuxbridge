@@ -27,7 +27,7 @@ def verify(
         for i, interface in enumerate(interfaces):
             vlan = _nics.get(interface.name)
             if vlan:
-                ssh_helper = SSHHelper(interface.switch_ip, Config["junos_username"])
+                ssh_helper = SSHHelper(interface.switch_ip, Config["switch_username"])
 
                 try:
                     _, old_vlan_out = ssh_helper.run_cmd(
