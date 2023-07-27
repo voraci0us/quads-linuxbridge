@@ -25,7 +25,7 @@ class Bridge(object):
                 "ssh -o StrictHostKeyChecking=no %s@%s"
                 % (Config["switch_username"], self.ip_address)
             )
-            self.child.expect(">")
+            self.child.expect("#")
         except pexpect.exceptions.TIMEOUT:
             raise BridgeException("Timeout trying to connect via SSH")
 
