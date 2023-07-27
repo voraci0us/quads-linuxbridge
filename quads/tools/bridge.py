@@ -43,20 +43,8 @@ class Bridge(object):
     def set_port(self):
         try:
             self.connect()
-            #self.execute("edit")
-            #self.execute("rollback")
-            #self.execute(f"delete interfaces {self.switch_port}")
-            #self.execute(
-            #    f"set interfaces {self.switch_port} apply-groups QinQ_vl{self.new_vlan}"
-            #)
-
-            #if self.old_vlan:
-            #    self.execute(
-            #        f"delete vlans vlan{self.old_vlan} interface {self.switch_port}"
-            #    )
-
-            #self.execute(f"set vlans vlan{self.new_vlan} interface {self.switch_port}")
-            #self.execute("commit", "commit complete")
+            self.execute(f"bridge vlan del dev {self.switch_port} vid {self.old_vlan}")
+            self.execute(f"bridge vlan add dev {self.switch_port} vid {self.new_vlan} pvid untagged")
             self.close()
         except BridgeException as ex:
             logger.debug(ex)
@@ -66,25 +54,8 @@ class Bridge(object):
     def convert_port_public(self):
         try:
             self.connect()
-            #self.execute("edit")
-            #self.execute("rollback")
-            #self.execute(f"delete interfaces {self.switch_port}")
-            #self.execute(
-            #    f"set interfaces {self.switch_port} native-vlan-id {self.new_vlan}"
-            #)
-            #self.execute(
-            #    f"set interfaces {self.switch_port} unit 0 family ethernet-switching interface-mode trunk"
-            #)
-            #self.execute(
-            #    f"set interfaces {self.switch_port} unit 0 family ethernet-switching vlan members vlan{self.new_vlan}"
-            #)
-
-            #if self.old_vlan and self.old_vlan != self.new_vlan:
-            #    self.execute(
-            #        f"delete vlans vlan{self.old_vlan} interface {self.switch_port}"
-            #    )
-
-            #self.execute("commit", "commit complete")
+            self.execute(f"bridge vlan del dev {self.switch_port} vid {self.old_vlan}")
+            self.execute(f"bridge vlan add dev {self.switch_port} vid {self.new_vlan} pvid untagged")
             self.close()
         except BridgeException as ex:
             logger.debug(ex)
