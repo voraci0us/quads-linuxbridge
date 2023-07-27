@@ -11,6 +11,7 @@ from quads.model import Host, Cloud, Schedule
 from quads.tools.badfish import badfish_factory, BadfishException
 from quads.tools.foreman import Foreman
 from quads.tools.juniper import Juniper
+from quads.tools.bridge import Bridge
 from quads.tools.ssh_helper import SSHHelper, SSHHelperException
 
 logger = logging.getLogger(__name__)
@@ -72,13 +73,26 @@ def switch_config(host, old_cloud, new_cloud):
                     % _new_cloud_obj.vlan.vlan_id
                 )
 
-                juniper = Juniper(
-                    interface.switch_ip,
-                    interface.switch_port,
-                    old_vlan,
-                    _new_cloud_obj.vlan.vlan_id,
-                )
-                success = juniper.convert_port_public()
+                success = None
+                if Config["switch_type"] == "junos":
+                    juniper = Juniper(
+                        interface.switch_ip,
+                        interface.switch_port,
+                        old_vlan,
+                        _new_cloud_obj.vlan.vlan_id,
+                    )
+                    success = juniper.convert_port_public()
+                elif Config["switch_type"] == "bridge":
+                    bridge = Bridge(
+                        interface.switch_ip,
+                        interface.switch_port,
+                        old_vlan,
+                        _new_cloud_obj.vlan.vlan_id,
+                    )
+                    success = bridge.convert_port_public()
+                else:
+                    logger.error("Invalid switch type. Please choose bridge or junos")
+                    return False
 
                 if success:
                     logger.info("Successfully updated switch settings.")
@@ -92,10 +106,20 @@ def switch_config(host, old_cloud, new_cloud):
                     return False
         else:
             if int(old_vlan) != int(new_vlan):
-                juniper = Juniper(
-                    interface.switch_ip, interface.switch_port, old_vlan, new_vlan
-                )
-                success = juniper.set_port()
+                success = None
+                if Config["switch_type"] == "junos":
+                    juniper = Juniper(
+                        interface.switch_ip, interface.switch_port, old_vlan, new_vlan
+                    )
+                    success = juniper.set_port()
+                elif Config["switch_type"] == "bridge":
+                    bridge = Bridge(
+                        interface.switch_ip, interface.switch_port, old_vlan, new_vlan
+                    )
+                    success = bridge.set_port()
+                else:
+                    logger.error("Invalid switch type. Please choose bridge or junos")
+                    return False
 
                 if success:
                     logger.info("Successfully updated switch settings.")
