@@ -45,12 +45,21 @@ def switch_config(host, old_cloud, new_cloud):
                 ssh_helper.disconnect()
                 switch_ip = interface.switch_ip
                 ssh_helper = SSHHelper(switch_ip, Config["switch_username"])
-        result, old_vlan_out = ssh_helper.run_cmd(
-            "show configuration interfaces %s" % interface.switch_port
-        )
         old_vlan = None
-        if result and old_vlan_out:
-            old_vlan = old_vlan_out[0].split(";")[0].split()[1][7:]
+        if Config["switch_type"] == "junos":
+            result, old_vlan_out = ssh_helper.run_cmd(
+                "show configuration interfaces %s" % interface.switch_port
+            )
+            if result and old_vlan_out:
+                old_vlan = old_vlan_out[0].split(";")[0].split()[1][7:]
+        elif Config["switch_type"] == "bridge":
+            result, old_vlan_out = ssh_helper.run_cmd(
+                "bridge vlan show dev %s | grep PVID" % interface.switch_port
+            )
+            print(f"RESULT {result} OLD_VLAN_OUT {old_vlan_out}")
+            if result and old_vlan_out:
+                old_vlan = old_vlan_out[0].split(" ")[-4]
+                print(f"Old vlan {old_vlan}")
         if not old_vlan:
             if not _new_cloud_obj.vlan and not last_nic:
                 logger.warning(
