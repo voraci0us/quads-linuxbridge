@@ -56,10 +56,8 @@ def switch_config(host, old_cloud, new_cloud):
             result, old_vlan_out = ssh_helper.run_cmd(
                 "bridge vlan show dev %s | grep PVID" % interface.switch_port
             )
-            print(f"RESULT {result} OLD_VLAN_OUT {old_vlan_out}")
             if result and old_vlan_out:
                 old_vlan = old_vlan_out[0].split(" ")[-4]
-                print(f"Old vlan {old_vlan}")
         if not old_vlan:
             if not _new_cloud_obj.vlan and not last_nic:
                 logger.warning(
